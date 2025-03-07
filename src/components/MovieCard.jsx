@@ -51,11 +51,7 @@ const MovieCard = () => {
         })}
       </div>
       <div>
-        <Pagination
-          pageNumProp={pageNum}
-          onNextProp={onNext}
-          onPreviousProp={onPrevious}
-        />
+        <Pagination pageNum={pageNum} onNext={onNext} onPrevious={onPrevious} />
       </div>
     </div>
   );
