@@ -19,10 +19,11 @@ const MovieCard = () => {
   };
 
   //watchlist handler
-  const addWatchList = (id) => {
-    const newWatchList = [...watchList, id];
+  const addWatchList = (movie) => {
+    const newWatchList = [...watchList, movie];
     setWatchList(newWatchList);
-    console.log(newWatchList);
+
+    localStorage.setItem("imdb", JSON.stringify(setWatchList));
   };
 
   const removeWatchList = (id) => {
@@ -72,10 +73,10 @@ const MovieCard = () => {
           >
             <div
               className="p-2 bg-gray-900 rounded-xl absolute right-1 top-1"
-              style={{ display: hovered === movie.id ? "block" : "none" }}//okksai annaku adugutha hover effect how on block
+              style={{ display: hovered === movie.id ? "block" : "none" }} //okksai annaku adugutha hover effect how on block
             >
               {watchList.includes(movie.id) === false ? (
-                <div onClick={() => addWatchList(movie.id)}>🥰</div>
+                <div onClick={() => addWatchList(movie)}>🥰</div>
               ) : (
                 <div onClick={() => removeWatchList(movie.id)}>❌</div>
               )}
