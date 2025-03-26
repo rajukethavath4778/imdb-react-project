@@ -4,6 +4,8 @@ const WatchList = () => {
   const [favorites, setFavorites] = useState([]);
   const [genres, setGenres] = useState([]);
   const [currGenre, setCurrGenre] = useState("All genres");
+  const [rating, setRating] = useState(0);
+  const [popularity, setPopularity] = useState(0);
 
   useEffect(() => {
     const moviesFromLocalStorage = localStorage.getItem("imdb");
@@ -49,6 +51,33 @@ const WatchList = () => {
       ? favorites
       : favorites.filter((movie) => genreids[movie.genre_ids[0]] === currGenre);
 
+  if (rating === 1) {
+    filteredArray.sort(function (objA, objB) {
+      return objA.vote_average - objB.vote_average;
+    });
+  }
+  if (rating === -1) {
+    filteredArray.sort(function (objA, objB) {
+      return objB.vote_average - objA.vote_average;
+    });
+  }
+  if (popularity === 1) {
+    filteredArray.sort(function (objA, objB) {
+      return objA.popularity - objB.popularity;
+    });
+  }
+  if (popularity === -1) {
+    filteredArray.sort(function (objA, objB) {
+      return objB.popularity - objA.popularity;
+    });
+  }
+
+  const del = (movie) => {
+    let newArray = favorites.filter((m) => m.id !== movie.id);
+    setFavorites(newArray); // Corrected this line
+    localStorage.setItem("imdb", JSON.stringify(newArray));
+  };
+
   return (
     <>
       <div className="mt-4 flex justify-center space-x-1">
@@ -74,12 +103,32 @@ const WatchList = () => {
               <th className="px-6 py-4 font-medium text-gray-900">Name</th>
               <th>
                 <div className="flex">
+                  <img
+                    src="https://img.icons8.com/external-those-icons-lineal-those-icons/24/000000/external-up-arrows-those-icons-lineal-those-icons-3.png "
+                    className="mr-1"
+                    onClick={() => setRating(1)}
+                  />
                   <div>Rating</div>
+                  <img
+                    src="https://img.icons8.com/external-those-icons-lineal-those-icons/24/000000/external-down-arrows-those-icons-lineal-those-icons-4.png"
+                    className="ml-1"
+                    onClick={() => setRating(-1)}
+                  />
                 </div>
               </th>
               <th>
                 <div className="flex">
+                  <img
+                    src="https://img.icons8.com/external-those-icons-lineal-those-icons/24/000000/external-up-arrows-those-icons-lineal-those-icons-3.png "
+                    className="mr-1"
+                    onClick={() => setPopularity(1)}
+                  />
                   <div>Popularity</div>
+                  <img
+                    src="https://img.icons8.com/external-those-icons-lineal-those-icons/24/000000/external-down-arrows-those-icons-lineal-those-icons-4.png"
+                    className="ml-1"
+                    onClick={() => setPopularity(-1)}
+                  />
                 </div>
               </th>
               <th>
@@ -106,8 +155,11 @@ const WatchList = () => {
                 </td>
                 <td className="pl-3 py-4">{movie.vote_average}</td>
                 <td className="pl-4 py-4">{movie.popularity}</td>
-                <td className="pl-1 py-4">
-                  {genreids[movie.genre_ids[0]]}
+                <td className="pl-1 py-4">{genreids[movie.genre_ids[0]]}</td>
+                <td>
+                  <button className="text-red-600" onClick={() => del(movie)}>
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
