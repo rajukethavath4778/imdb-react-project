@@ -6,6 +6,7 @@ const WatchList = () => {
   const [currGenre, setCurrGenre] = useState("All genres");
   const [rating, setRating] = useState(0);
   const [popularity, setPopularity] = useState(0);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const moviesFromLocalStorage = localStorage.getItem("imdb");
@@ -46,35 +47,33 @@ const WatchList = () => {
     37: "Western",
   };
 
-  const filteredArray =
+  // Filter and sort the movies
+  let filteredArray =
     currGenre === "All genres"
       ? favorites
       : favorites.filter((movie) => genreids[movie.genre_ids[0]] === currGenre);
 
   if (rating === 1) {
-    filteredArray.sort(function (objA, objB) {
-      return objA.vote_average - objB.vote_average;
-    });
+    filteredArray.sort((objA, objB) => objA.vote_average - objB.vote_average);
   }
   if (rating === -1) {
-    filteredArray.sort(function (objA, objB) {
-      return objB.vote_average - objA.vote_average;
-    });
+    filteredArray.sort((objA, objB) => objB.vote_average - objA.vote_average);
   }
   if (popularity === 1) {
-    filteredArray.sort(function (objA, objB) {
-      return objA.popularity - objB.popularity;
-    });
+    filteredArray.sort((objA, objB) => objA.popularity - objB.popularity);
   }
   if (popularity === -1) {
-    filteredArray.sort(function (objA, objB) {
-      return objB.popularity - objA.popularity;
-    });
+    filteredArray.sort((objA, objB) => objB.popularity - objA.popularity);
   }
+
+  // Apply search filter
+  filteredArray = filteredArray.filter((movie) =>
+    movie.original_title.toLowerCase().includes(search.toLowerCase())
+  );
 
   const del = (movie) => {
     let newArray = favorites.filter((m) => m.id !== movie.id);
-    setFavorites(newArray); // Corrected this line
+    setFavorites(newArray);
     localStorage.setItem("imdb", JSON.stringify(newArray));
   };
 
@@ -94,6 +93,15 @@ const WatchList = () => {
             {genre}
           </button>
         ))}
+      </div>
+      <div className="flex justify-center">
+        <input
+          type="text"
+          placeholder="Search for Movies"
+          className="border border-gray-300 rounded-lg p-1 m-2 text-center justify-center"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
       </div>
 
       <div className="overflow-hidden rounded-lg border border-gray-200 shadow-md-m-1">
