@@ -8,7 +8,15 @@ const MovieCard = () => {
   const [watchList, setWatchList] = useState([]);
   const [hovered, setHovered] = useState("");
 
-  //pagination handlers
+  // Initialize watchList from localStorage
+  useEffect(() => {
+    const storedWatchList = localStorage.getItem("imdb");
+    if (storedWatchList) {
+      setWatchList(JSON.parse(storedWatchList));
+    }
+  }, []);
+
+  // Pagination handlers
   const onNext = () => {
     setPageNum(pageNum + 1);
   };
@@ -18,18 +26,17 @@ const MovieCard = () => {
     }
   };
 
-  //watchlist handler
+  // Watchlist handlers
   const addWatchList = (movie) => {
     const newWatchList = [...watchList, movie];
     setWatchList(newWatchList);
-    localStorage.setItem("imdb", JSON.stringify(watchList));
+    localStorage.setItem("imdb", JSON.stringify(newWatchList)); // Save the updated watchList
   };
 
   const removeWatchList = (movie) => {
     const filteredWatchList = watchList.filter((m) => m.id !== movie.id);
     setWatchList(filteredWatchList);
-    console.log(filteredWatchList);
-    localStorage.setItem("imdb", JSON.stringify(watchList));
+    localStorage.setItem("imdb", JSON.stringify(filteredWatchList)); // Save the updated watchList
   };
 
   const showButton = (id) => {
@@ -41,7 +48,6 @@ const MovieCard = () => {
   };
 
   useEffect(() => {
-    
     const fetchMovies = async () => {
       try {
         const response = await axios.get(
@@ -76,7 +82,7 @@ const MovieCard = () => {
               className="p-2 bg-gray-900 rounded-xl absolute right-1 top-1"
               style={{ display: hovered === movie.id ? "block" : "none" }}
             >
-              {watchList.includes(movie) == false ? (
+              {watchList.some((m) => m.id === movie.id) === false ? (
                 <div onClick={() => addWatchList(movie)}>🥰</div>
               ) : (
                 <div onClick={() => removeWatchList(movie)}>❌</div>
